@@ -3,13 +3,19 @@ import { MoviContex } from "../contex";
 import Delete from "../assets/delete.svg";
 import Checkout from "../assets/icons/checkout.svg";
 import { getMovieUrl } from "../Utlity/getMoviUrl";
+import { toast } from "react-toastify";
 
 /* eslint-disable react/prop-types */
 const ShopingCart = ({ onClose }) => {
-  const { cartData, setCartData } = useContext(MoviContex);
-  const handelRemoveMovie = (id) => {
-    const delet = cartData.filter((item) => item.id !== id);
-    setCartData(delet);
+  const { state, dispatch } = useContext(MoviContex);
+  const handelRemoveMovie = (item) => {
+    dispatch({
+      type: "REMOVE_FROM_CART",
+      payload: item,
+    });
+    toast.success(`${item.title} Delete successfully`, {
+      position: "top-right",
+    });
   };
   return (
     <div className="fixed top-0 left-0 w-screen h-screen z-50 bg-black/60 backdrop-blur-sm">
@@ -19,10 +25,10 @@ const ShopingCart = ({ onClose }) => {
             Your Carts
           </h2>
           <div className="space-y-8 lg:space-y-12 max-h-[450px] overflow-auto mb-10 lg:mb-14">
-            {cartData.length === 0 ? (
+            {state.cartData.length === 0 ? (
               <p className="text-2xl">Cart is empty</p>
             ) : (
-              cartData.map((movie) => (
+              state.cartData.map((movie) => (
                 <div key={movie.id} className="grid grid-cols-[1fr_auto] gap-4">
                   <div className="flex items-center gap-4">
                     <img
@@ -42,7 +48,7 @@ const ShopingCart = ({ onClose }) => {
                   </div>
                   <div className="flex justify-between gap-4 items-center">
                     <button
-                      onClick={() => handelRemoveMovie(movie.id)}
+                      onClick={() => handelRemoveMovie(movie)}
                       className="bg-[#D42967] rounded-md p-2 md:px-4 inline-flex items-center space-x-2 text-white"
                     >
                       <img className="w-5 h-5" src={Delete} alt="Delete" />

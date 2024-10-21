@@ -4,12 +4,13 @@ import Tag from "../../assets/tag.svg";
 import MovieDetailsModal from "./MovieDetailsModal";
 import { useContext, useState } from "react";
 import { MoviContex } from "../../contex";
+import { toast } from "react-toastify";
 
 /* eslint-disable react/prop-types */
 const MoviCart = ({ movie }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState(null);
-  const { cartData, setCartData } = useContext(MoviContex);
+  const { state, dispatch } = useContext(MoviContex);
 
   const handelClose = () => {
     setSelectedMovie(null);
@@ -23,11 +24,21 @@ const MoviCart = ({ movie }) => {
   const handelAddToCart = (event, movie) => {
     event.stopPropagation();
 
-    const find = cartData.find((m) => m.id === movie.id);
+    const find = state.cartData.find((m) => m.id === movie.id);
     if (!find) {
-      setCartData([...cartData, movie]);
+      dispatch({
+        type: "ADD_TO_CART",
+        payload: {
+          ...movie,
+        },
+      });
+      toast.success(`${movie.title} added successfully`, {
+        position: "bottom-right",
+      });
     } else {
-      alert(`This movie already in cart`);
+      toast.error("Movie Already added !", {
+        position: "top-center",
+      });
     }
   };
   return (
